@@ -1,0 +1,98 @@
+# CFD: UDiT + Pressure Conditioning
+# Paper: Table A1, Fig 3
+project: topo-transformers-mse
+name: cfd-udit-pressure
+batch_size: 64
+max_epochs: 151
+max_steps: 10000
+normalize_target: False
+sel_denorm_channels: None
+threshold_accuracy: 0.5
+
+trainer:
+    base_learning_rate: 5.0e-4
+    batch_size: ${batch_size}
+    scale_lr: False
+    max_steps: ${max_steps}
+    params:
+        _file: config/default_trainer_args.yaml
+        max_epochs: ${max_epochs}
+        accumulate_grad_batches: 4
+        precision: bf16-mixed
+        max_steps: ${max_steps}
+
+num_train_timesteps: 10
+sel_channels_norm: None
+
+pipelines:
+    default:
+      target: pdetransformer.sampler.pipeline.VideoPipelineDirect
+
+patch_size: 4
+window_size: 8
+in_channels: 2
+out_channels: 1
+sample_size: 128
+sigma_min: 1e-4
+num_sampling_steps: 100
+
+model:
+    target: topotransformer.core.mixed_channels.SingleStepDiffusion
+    params:
+        model:
+          target: pdetransformer.core.mixed_channels.UDiT
+          params:
+            sample_size: ${sample_size}
+            in_channels: ${in_channels}
+            out_channels: ${out_channels}
+            type: U-DiT-S
+            patch_size: ${patch_size}
+        objective:
+          target: pdetransformer.objectives.COTFlowMatchingCoupled
+          params:
+            sigma_min: ${sigma_min}
+            max_channels: 1
+            dropout_state: 0.0
+        monitor: val/loss_epoch
+        ckpt_path: ${runtime.checkpoint_dir}
+        image_key: 0
+        optimizer: adamw
+
+unrolling_steps: 1
+test_unrolling_steps: 1
+sel_channels_input: [3]  # ch3 = pressure
+sel_channels_target: [4]  # ch4 = topology
+
+data:
+  _file: config/data/data10k.yaml
+
+frequency_log_images: 5
+frequency_log_metrics: 5
+frequency_store_pipelines: 5
+
+callbacks:
+  _file: config/default_callbacks.yaml
+  ema:
+    target: pdetransformer.callback.EMA
+    params:
+      decay: 0.999
+  emagrad:
+    target: pdetransformer.callback.EmaGradClip
+    params:
+      ema_coef1: 0.9
+      ema_coef2: 0.99
+      max_norm_ratio: 2.0
+      clip_norm_ratio: 1.1
+  simulation:
+    target: topotransformer.callback.Simulation2DMetricLoggerCustom
+    params:
+      frequency: ${frequency_log_metrics}
+      batch_size: ${batch_size}
+      num_frames: 1
+      num_inference_steps: 100
+      test_only: True
+      sel_channels: [-1]
+      sel_channels_norm: None
+      use_ema: true
+      metric_config:
+        _file: config/default_simulation_metrics.yaml

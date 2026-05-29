@@ -1,0 +1,116 @@
+# CFD: Ours (Cross-Attention BFM) + Pressure Conditioning
+# Paper: Table 2, Table A1
+project: topo-transformers-mse
+name: cfd-ours-pressure
+batch_size: 128
+max_epochs: 151
+max_steps: 10000
+
+trainer:
+    base_learning_rate: 5.0e-4
+    batch_size: ${batch_size}
+    scale_lr: False
+    max_steps: ${max_steps}
+    params:
+        _file: config/default_trainer_args.yaml
+        max_epochs: ${max_epochs}
+        accumulate_grad_batches: 2
+        max_steps: ${max_steps}
+        precision: bf16-mixed
+
+num_train_timesteps: 100
+threshold_accuracy: 0.5
+sel_denorm_channels: None
+
+pipelines:
+    default:
+      target: pdetransformer.sampler.pipeline.VideoPipelineDirect
+
+patch_size: 4
+window_size: 33
+in_channels: 2
+out_channels: 1
+sample_size: 128
+
+bernoulli_eps: 1e-6
+denormalize_target: False
+target_channel_idx: 4
+prior_type: uniform
+volume_fraction: 0.5
+volume_fraction_std: 0.1
+num_sampling_steps: 50
+sampling_method: heun
+threshold: null
+use_pos_enc: cpe
+conditional_channels: [-1]
+
+model:
+    target: topotransformer.core.mixed_channels.train_bernoulli_flow.BernoulliFlowDiffusion
+    params:
+        model:
+          target: topotransformer.core.mixed_channels.FA_cross.PDETransformerFA_Cross
+          params:
+            sample_size: ${sample_size}
+            use_natten: True
+            window_size: ${window_size}
+            use_pos_enc: ${use_pos_enc}
+            in_channels: ${in_channels}
+            out_channels: ${out_channels}
+            conditional_channels: ${conditional_channels}
+            type: PDE-S
+            patch_size: ${patch_size}
+            periodic: False
+            normalize_channels: False
+            carrier_token_active: False
+
+        learning_rate: ${trainer.base_learning_rate}
+        eps: ${bernoulli_eps}
+        prior_type: ${prior_type}
+        volume_fraction: ${volume_fraction}
+        volume_fraction_std: ${volume_fraction_std}
+        num_sampling_steps: ${num_sampling_steps}
+        sampling_method: ${sampling_method}
+        threshold: ${threshold}
+        denormalize_target: ${denormalize_target}
+        target_channel_idx: ${target_channel_idx}
+
+        monitor: val/loss
+        ckpt_path: ${runtime.checkpoint_dir}
+
+unrolling_steps: 1
+test_unrolling_steps: 1
+sel_channels_input: [3]  # ch3 = pressure
+sel_channels_target: [4]  # ch4 = material indicator (topology)
+normalize_target: false
+
+data:
+  _file: config/data/data10k.yaml
+
+frequency_log_images: 5
+frequency_log_metrics: 5
+frequency_store_pipelines: 5
+
+callbacks:
+  _file: config/default_callbacks.yaml
+  ema:
+    target: pdetransformer.callback.EMA
+    params:
+      decay: 0.999
+  simulation:
+    target: topotransformer.callback.Simulation2DMetricLoggerCustom
+    params:
+      frequency: ${frequency_log_metrics}
+      batch_size: ${batch_size}
+      num_frames: 1
+      num_inference_steps: ${num_sampling_steps}
+      test_only: True
+      use_ema: True
+      sel_channels: [-1]
+      sel_channels_norm: None
+      metric_config:
+        _file: config/default_simulation_metrics.yaml
+  emagrad:
+    target: pdetransformer.callback.EmaGradClip
+    params:
+      ema_coef1: 0.9
+      ema_coef2: 0.99

@@ -1,0 +1,6 @@
+theme: jekyll-theme-minimal
+title: "TopoTransformer"
+description: "On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching"
+show_downloads: false
+plugins:
+  - jekyll-relative-links

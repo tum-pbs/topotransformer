@@ -1,0 +1,146 @@
+project: topo-transformers-structural
+name: structural-v10-sensitivity
+batch_size: 256
+max_epochs: 10
+max_steps: -1
+normalize_target: false
+trainer:
+  base_learning_rate: 0.0005
+  batch_size: 256
+  scale_lr: false
+  max_steps: -1
+  params:
+    devices: 1
+    accelerator: gpu
+    strategy: ddp
+    max_epochs: 10
+    max_steps: -1
+    accumulate_grad_batches: 1
+    precision: bf16-mixed
+num_train_timesteps: 10
+threshold_accuracy: 0.5
+sel_denorm_channels: None
+pipelines:
+  default:
+    target: pdetransformer.sampler.pipeline.VideoPipelineDirect
+patch_size: 4
+window_size: 32
+in_channels: 3
+out_channels: 1
+sample_size: 128
+sigma_min: 0.0001
+conditional_channels:
+- -1
+- -2
+use_pos_enc: cpe
+num_sampling_steps: 50
+model:
+  target: topotransformer.core.mixed_channels.train_bernoulli_flow.BernoulliFlowDiffusion
+  params:
+    model:
+      target: topotransformer.core.mixed_channels.FA_cross.PDETransformerFA_Cross
+      params:
+        sample_size: 128
+        in_channels: 3
+        out_channels: 1
+        type: PDE-S
+        patch_size: 4
+        periodic: false
+        conditional_channels:
+        - -1
+        - -2
+        use_pos_enc: cpe
+        use_natten: true
+        normalize_channels: false
+        carrier_token_active: false
+        window_size: 33
+    denormalize_target: false
+    target_channel_idx: 0
+    learning_rate: 0.0005
+    monitor: val/loss_epoch
+    ckpt_path: null
+    image_key: 0
+    optimizer: adamw
+unrolling_steps: 1
+test_unrolling_steps: 1
+sel_channels_input:
+- 1
+- 0
+sel_channels_target:
+- 0
+data:
+  target: topotransformer.data.MultiDataModule
+  params:
+    path_index:
+      CUSTOM: ./datasets/
+    dataset_names:
+    - structuralsq-47k-v10_structuralsq-test-ood-v10_.99
+    dataset_type: CUSTOM
+    unrolling_steps: 1
+    test_unrolling_steps: 1
+    batch_size: 256
+    num_workers: 8
+    cache_strategy: none
+    different_resolution_strategy: none
+    normalize_data: mean-std
+    normalize_const: mean-std
+    downsample_factor: 1
+    max_channels: 1
+    sel_channels_input:
+    - 1
+    - 0
+    sel_channels_target:
+    - 0
+    max_constants: 5
+    normalize_target: false
+frequency_log_images: 5
+frequency_log_metrics: 5
+frequency_store_pipelines: 5
+callbacks:
+  setup_callback:
+    target: pdetransformer.callback.setup_callback.SetupCallback
+    params:
+      resume: false
+      logdir: ${runtime.logdir}
+      ckptdir: ${runtime.checkpoint_dir}
+      cfgdir: ${runtime.config_dir}
+  model_summary:
+    target: lightning.pytorch.callbacks.ModelSummary
+    params:
+      max_depth: 10
+  learning_rate_logger:
+    target: lightning.pytorch.callbacks.LearningRateMonitor
+    params:
+      logging_interval: step
+  model_checkpoint:
+    target: lightning.pytorch.callbacks.ModelCheckpoint
+    params:
+      dirpath: ${runtime.checkpoint_dir}
+      filename: '{epoch:06}'
+      verbose: true
+      save_last: true
+      monitor: val/loss_epoch
+      save_top_k: 3
+  ema:
+    target: pdetransformer.callback.EMA
+    params:
+      decay: 0.999
+  emagrad:
+    target: pdetransformer.callback.EmaGradClip
+    params:
+      ema_coef1: 0.9
+      ema_coef2: 0.99
+      max_norm_ratio: 2.0
+      clip_norm_ratio: 1.1
+train: true
+inference: true
+debug: false
+ema: true
+runtime:
+  seed: 42
+  project: topo-transformers-structural
+  logdir: ${runtime.logdir}
+  name: structural-v10-sensitivity
+  logger_state: disabled
+  debug: false
+  resume: false

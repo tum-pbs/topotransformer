@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.so
+*.egg
+.pytest_cache/
+
+# Training artifacts
+logs/
+wandb/
+nohup.out
+*.pid
+
+# Data (too large for git)
+datasets/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

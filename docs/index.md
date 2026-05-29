@@ -29,36 +29,30 @@ title: Home
   </p>
 </div>
 
----
-
 ## Abstract
 
 Surrogate models for topology optimization (TO) exhibit highly variable out-of-distribution (OOD) generalization under distribution shifts such as changing loads or boundary conditions, yet the source of this variability remains unclear. We hypothesize that OOD performance is governed by how much information the conditioning signal preserves about the adjoint sensitivity that drives classical TO. Modeling the TO pipeline as a causal Markov chain, the Data Processing Inequality establishes that the sensitivity field is an information-theoretically optimal conditioning signal for topology prediction. However, computing exact adjoint sensitivities can be expensive or unavailable in practice; we observe that certain physical fields can approximate sensitivities through monotone transformations. To formalize this, we introduce **pseudo-sensitivities** to characterize which fields enable generalization versus those that are information-poor. We then show that a sensitivity-conditioned Bernoulli flow-matching generator empirically confirms these predictions: conditioning on sensitivities yields state-of-the-art OOD performance, while increasingly distant physical fields degrade toward raw parameter conditioning. Results hold across structural TO benchmarks under load shifts and our new CFD-TO dataset under boundary-condition shifts such as multi-outlet configurations.
-
----
 
 ## Key Contributions
 
 <div style="display: flex; flex-wrap: wrap; gap: 1.5em; margin: 1.5em 0;">
 
 <div style="flex: 1; min-width: 280px; padding: 1em; border: 1px solid #e1e4e8; border-radius: 8px;">
-<h3>🔄 Bernoulli Flow Matching</h3>
+<h3>Bernoulli Flow Matching</h3>
 <p>A flow-matching formulation operating directly on binary topology fields, avoiding the mismatch between continuous generative models and discrete 0/1 optimization targets.</p>
 </div>
 
 <div style="flex: 1; min-width: 280px; padding: 1em; border: 1px solid #e1e4e8; border-radius: 8px;">
-<h3>📐 Sensitivity Conditioning</h3>
+<h3>Sensitivity Conditioning</h3>
 <p>Conditions generation on adjoint sensitivity fields — the information-theoretically optimal signal under a causal Markov abstraction — enabling strong OOD generalization.</p>
 </div>
 
 <div style="flex: 1; min-width: 280px; padding: 1em; border: 1px solid #e1e4e8; border-radius: 8px;">
-<h3>🧩 Pseudo-Sensitivities</h3>
+<h3>Pseudo-Sensitivities</h3>
 <p>A principled framework to identify which physical fields can substitute for exact sensitivities: any field related by a monotone transform preserves the information needed for generalization.</p>
 </div>
 
 </div>
-
----
 
 ## Results
 
@@ -113,8 +107,6 @@ The choice of conditioning signal has a dramatic effect on generalization. Sensi
   </div>
 </div>
 
----
-
 ## Deployment Enhancements
 
 Generative models for topology optimization face a practical gap: raw stochastic outputs contain **salt-and-pepper noise** — isolated misclassified pixels that make topologies unusable in downstream simulation software. Engineers also need control over **material budget** (volume fraction) and the ability to **block out spatial regions** (e.g., for bolts, sensors, or cables) — all without retraining.
@@ -155,8 +147,6 @@ Engineers can mark keep-out zones in the sensitivity field — regions where no 
   <p style="color: #666; font-size: 0.85em;">Spatial blocking: the engineer marks a circular keep-out zone (middle row); the model generates a topology that avoids that region (bottom row).</p>
 </div>
 
----
-
 ## Quick Start
 
 ```bash
@@ -174,8 +164,6 @@ python main.py --config config/structural/structural-v10-sensitivity.yaml --seed
 ```
 
 See the [README](https://github.com/tum-pbs/topotransformer#readme) for full usage, evaluation scripts, and dataset details.
-
----
 
 ## Reproducing Paper Results
 
@@ -217,8 +205,6 @@ python eval/compute_bce.py --model_dir logs/<experiment> --dataset <test_data> -
 python eval/evaluate_compliance.py --model_dir logs/<experiment> --dataset <test_data> --gt_dir <gt_path>
 ```
 
----
-
 ## Architecture
 
 <div style="text-align: center; margin: 1.5em 0;">
@@ -229,8 +215,6 @@ The model uses a transformer backbone with:
 - **Cross-attention conditioning** — physical fields (sensitivity, pressure, velocity) attend to topology tokens via cross-attention, keeping conditioning and generation in separate streams
 - **Bernoulli flow matching** — iterative refinement from uniform random bits to binary topology via learned transition probabilities
 - **Single-step inference** — at test time, the model generates a topology in one forward pass (50 refinement steps)
-
----
 
 ## Citation
 
@@ -245,8 +229,6 @@ The model uses a transformer backbone with:
     year={2026}
 }
 ```
-
----
 
 ## License
 

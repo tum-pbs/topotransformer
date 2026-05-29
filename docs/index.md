@@ -232,7 +232,7 @@ The model uses a transformer backbone with:
 
 ## License
 
-This project is released under the [MIT License](https://github.com/tum-pbs/topotransformer/blob/main/LICENSE).
+This project is released under the [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/) license.
 
 <div style="text-align: center; margin-top: 2em; color: #999; font-size: 0.9em;">
   Technical University of Munich — Physics-based Deep Learning Group

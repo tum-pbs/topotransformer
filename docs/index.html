@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="title" content="TopoTransformer - On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching">
+  <meta name="description" content="We show that sensitivity fields are information-theoretically optimal conditioning signals for topology optimization surrogates, enabling strong OOD generalization via Bernoulli flow matching.">
+  <meta name="keywords" content="topology optimization, generative models, flow matching, sensitivity analysis, out-of-distribution generalization, deep learning, CFD, structural optimization">
+  <meta name="author" content="Mohammad Rashed, Duarte F. Valoroso Madeira, Babak Gholami, Caglar Guerbuez, Yunjia Yang, Nils Thuerey">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="TUM Physics-based Deep Learning">
+  <meta property="og:title" content="TopoTransformer — Sensitivity-Conditioned Bernoulli Flow Matching for Topology Optimization">
+  <meta property="og:description" content="We show that sensitivity fields are information-theoretically optimal conditioning signals for topology optimization surrogates, enabling strong OOD generalization.">
+  <meta property="og:url" content="https://tum-pbs.github.io/topotransformer">
+  <meta property="og:image" content="https://tum-pbs.github.io/topotransformer/static/images/theory_overview.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="article:published_time" content="2026-01-01T00:00:00.000Z">
+  <meta property="article:author" content="Mohammad Rashed">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="TopoTransformer — Sensitivity-Conditioned Bernoulli Flow Matching">
+  <meta name="twitter:description" content="Sensitivity fields are information-theoretically optimal for topology optimization surrogates. ICML 2026.">
+  <meta name="twitter:image" content="https://tum-pbs.github.io/topotransformer/static/images/theory_overview.png">
+
+  <!-- Academic -->
+  <meta name="citation_title" content="On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching">
+  <meta name="citation_author" content="Rashed, Mohammad">
+  <meta name="citation_author" content="Madeira, Duarte F. Valoroso">
+  <meta name="citation_author" content="Gholami, Babak">
+  <meta name="citation_author" content="Guerbuez, Caglar">
+  <meta name="citation_author" content="Yang, Yunjia">
+  <meta name="citation_author" content="Thuerey, Nils">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="International Conference on Machine Learning (ICML)">
+
+  <meta name="theme-color" content="#2563eb">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>TopoTransformer — Sensitivity-Conditioned Bernoulli Flow Matching | ICML 2026</title>
+  
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+  
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching",
+    "description": "We show that sensitivity fields are information-theoretically optimal conditioning signals for topology optimization surrogates, enabling strong OOD generalization via Bernoulli flow matching.",
+    "author": [
+      {"@type": "Person", "name": "Mohammad Rashed", "affiliation": {"@type": "Organization", "name": "Technical University of Munich"}},
+      {"@type": "Person", "name": "Duarte F. Valoroso Madeira", "affiliation": {"@type": "Organization", "name": "Technical University of Munich"}},
+      {"@type": "Person", "name": "Babak Gholami", "affiliation": {"@type": "Organization", "name": "BMW AG"}},
+      {"@type": "Person", "name": "Caglar Guerbuez", "affiliation": {"@type": "Organization", "name": "BMW AG"}},
+      {"@type": "Person", "name": "Yunjia Yang", "affiliation": {"@type": "Organization", "name": "Hamburg University of Technology"}},
+      {"@type": "Person", "name": "Nils Thuerey", "affiliation": {"@type": "Organization", "name": "Technical University of Munich"}}
+    ],
+    "datePublished": "2026",
+    "publisher": {"@type": "Organization", "name": "ICML"},
+    "url": "https://tum-pbs.github.io/topotransformer",
+    "keywords": ["topology optimization", "flow matching", "sensitivity analysis", "generalization"],
+    "isAccessibleForFree": true
+  }
+  </script>
+</head>
+<body>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching</h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">
+                <a href="https://ge.in.tum.de/about/mohammad-rashed/" target="_blank">Mohammad Rashed</a><sup>1,2</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Duarte F. Valoroso Madeira</a><sup>1</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Babak Gholami</a><sup>2</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Caglar Guerbuez</a><sup>2</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Yunjia Yang</a><sup>3</sup>,</span>
+              <span class="author-block">
+                <a href="https://ge.in.tum.de/about/n-thuerey/" target="_blank">Nils Thuerey</a><sup>1</sup>
+              </span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Technical University of Munich &nbsp; <sup>2</sup>BMW AG &nbsp; <sup>3</sup>Hamburg University of Technology</span>
+              <br>
+              <span class="author-block" style="font-weight: 600;">ICML 2026</span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <span class="link-block">
+                  <a href="#" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <span class="link-block">
+                <a href="#" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="ai ai-arxiv"></i>
+                </span>
+                <span>arXiv</span>
+              </a>
+            </span>
+
+              <span class="link-block">
+                <a href="https://github.com/tum-pbs/topotransformer" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code</span>
+              </a>
+            </span>
+
+              <span class="link-block">
+                <a href="#" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fas fa-database"></i>
+                </span>
+                <span>Dataset</span>
+              </a>
+            </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Teaser image -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img src="static/images/theory_overview.png" alt="Information-theoretic framework: causal Markov chain from physics parameters to optimal topology" style="width: 100%; border-radius: 12px;">
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+        <strong>(A)</strong> The topology optimization pipeline forms a causal Markov chain. The Data Processing Inequality implies that the sensitivity field is the information-theoretically optimal conditioning signal.
+        <strong>(B)</strong> Fields approximating sensitivities via monotone transforms (<em>pseudo-sensitivities</em>) generalize OOD; information-poor fields do not.
+      </h2>
+    </div>
+  </div>
+</section>
+<!-- End teaser -->
+
+<!-- Abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Surrogate models for topology optimization (TO) exhibit highly variable out-of-distribution (OOD) generalization under distribution shifts such as changing loads or boundary conditions, yet the source of this variability remains unclear. We hypothesize that OOD performance is governed by how much information the conditioning signal preserves about the adjoint sensitivity that drives classical TO. Modeling the TO pipeline as a causal Markov chain, the Data Processing Inequality establishes that the sensitivity field is an information-theoretically optimal conditioning signal for topology prediction. However, computing exact adjoint sensitivities can be expensive or unavailable in practice; we observe that certain physical fields can approximate sensitivities through monotone transformations. To formalize this, we introduce <strong>pseudo-sensitivities</strong> to characterize which fields enable generalization versus those that are information-poor. We then show that a sensitivity-conditioned Bernoulli flow-matching generator empirically confirms these predictions: conditioning on sensitivities yields state-of-the-art OOD performance, while increasingly distant physical fields degrade toward raw parameter conditioning. Results hold across structural TO benchmarks under load shifts and our new CFD-TO dataset under boundary-condition shifts such as multi-outlet configurations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End abstract -->
+
+
+<!-- Results Section -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Main Results</h2>
+        <div class="content has-text-justified">
+          <p>
+            We evaluate on two physics domains: <strong>CFD topology optimization</strong> (turbulent channel flow, RANS k-&epsilon;) and <strong>structural topology optimization</strong> (2D compliance minimization). Both include in-distribution (ID) and out-of-distribution (OOD) test sets with boundary conditions never seen during training.
+          </p>
+        </div>
+
+        <h3 class="title is-4" style="margin-top: 2rem;">CFD &mdash; Simulation-Level Accuracy</h3>
+        <p class="has-text-justified" style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Generated topologies evaluated through full CFD simulation in STAR-CCM+. Metrics: relative pressure-drop error (%) and 10%-accuracy.
+        </p>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>ID Mean&plusmn;Std</th>
+                <th>ID Med.</th>
+                <th>ID Acc.</th>
+                <th>OOD-M Med.</th>
+                <th>OOD-M Acc.</th>
+                <th>OOD-H Med.</th>
+                <th>OOD-H Acc.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>DiT</td>
+                <td>2.59&plusmn;4.21</td>
+                <td><strong>1.45</strong></td>
+                <td>96.4</td>
+                <td>3.66</td>
+                <td><strong>79.4</strong></td>
+                <td>4.85</td>
+                <td>70.6</td>
+              </tr>
+              <tr>
+                <td>UDiT</td>
+                <td><strong>2.37&plusmn;3.55</strong></td>
+                <td>1.65</td>
+                <td><strong>97.2</strong></td>
+                <td>3.59</td>
+                <td>76.4</td>
+                <td>7.00</td>
+                <td>62.7</td>
+              </tr>
+              <tr>
+                <td>PDE-T</td>
+                <td>2.98&plusmn;6.03</td>
+                <td>1.82</td>
+                <td>95.9</td>
+                <td>3.05</td>
+                <td>75.5</td>
+                <td>4.35</td>
+                <td>68.6</td>
+              </tr>
+              <tr style="background: #eef6ff;">
+                <td><strong>Ours</strong></td>
+                <td>3.44&plusmn;4.03</td>
+                <td>2.63</td>
+                <td>94.0</td>
+                <td><strong>2.82</strong></td>
+                <td>77.6</td>
+                <td><strong>2.70</strong></td>
+                <td><strong>74.5</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="has-text-centered" style="color: var(--text-secondary); font-size: 0.95rem; margin-top: 0.5rem;">
+          Our model achieves the best OOD-Hard accuracy (74.5%) and median error (2.70%), demonstrating the strongest generalization to unseen boundary conditions.
+        </p>
+
+        <h3 class="title is-4" style="margin-top: 2.5rem;">Structural &mdash; Compliance Error</h3>
+        <p class="has-text-justified" style="margin-bottom: 1rem; color: var(--text-secondary);">
+          Evaluated on 992 OOD samples with load configurations not seen during training.
+        </p>
+        <div class="table-container">
+          <table class="table is-bordered is-striped is-hoverable" style="max-width: 600px; margin: 0 auto;">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Params (M)</th>
+                <th>Mean Err<sub>C</sub> (%)</th>
+                <th>Med. Err<sub>C</sub> (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TopoDiff</td>
+                <td>121</td>
+                <td>8.57</td>
+                <td>1.14</td>
+              </tr>
+              <tr>
+                <td>NITO</td>
+                <td>22</td>
+                <td>9.33</td>
+                <td>2.37</td>
+              </tr>
+              <tr style="background: #eef6ff;">
+                <td><strong>Ours</strong></td>
+                <td><strong>34</strong></td>
+                <td><strong>5.73</strong></td>
+                <td><strong>0.53</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End results -->
+
+
+<!-- Conditioning Signal Comparison -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Conditioning Signal Matters</h2>
+        <div class="content has-text-justified">
+          <p>
+            The choice of conditioning signal has a dramatic effect on OOD generalization. Sensitivity and pseudo-sensitivities (e.g., strain energy density) generalize well, while information-poor fields (e.g., raw displacement or pressure) degrade sharply under distribution shift.
+          </p>
+        </div>
+        <div class="columns is-centered" style="margin-top: 1.5rem;">
+          <div class="column is-half">
+            <img src="static/images/entropy_conditioning_comparison.png" alt="Cross-entropy across conditioning signals" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.75rem;">
+              Topology cross-entropy across conditioning signals. Sensitivity and SED (pseudo-sensitivity) achieve nearly identical CE; physics parameters yield substantially higher uncertainty.
+            </p>
+          </div>
+          <div class="column is-half">
+            <img src="static/images/topologies.png" alt="Generated topologies across conditioning signals" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.75rem;">
+              OOD structural topologies: Ground truth vs. predictions conditioned on Sensitivity, SED (pseudo-sensitivity), and Displacement.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End conditioning -->
+
+
+<!-- Deployment Enhancements -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Deployment Enhancements</h2>
+        <div class="content has-text-justified">
+          <p>
+            Raw generative outputs contain salt-and-pepper noise that makes topologies unusable in simulation software. Engineers also need control over material budget and spatial constraints &mdash; all without retraining. We address this with inference-time strategies that work with the frozen, pre-trained model.
+          </p>
+        </div>
+        <img src="static/images/interactive_workflow.png" alt="Interactive AI-Powered Design pipeline" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1.5rem 0;">
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 2rem;">
+          The full deployment pipeline: an engineer defines a problem, runs one simulation to extract a sensitivity field, optionally edits the input, and the frozen model generates a clean, simulation-ready topology &mdash; no retraining required.
+        </p>
+
+        <div class="columns is-centered" style="margin-top: 1rem;">
+          <div class="column is-one-third">
+            <img src="static/images/icml_sampling.png" alt="Greedy terminal sampling" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h4 class="title is-5" style="margin-top: 1rem;">Greedy Terminal Sampling</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Greedy last-step decoding eliminates salt-and-pepper artifacts, producing clean binary topologies directly usable in simulation.
+            </p>
+          </div>
+          <div class="column is-one-third">
+            <img src="static/images/icml_vf_limit.png" alt="Volume fraction control" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h4 class="title is-5" style="margin-top: 1rem;">Volume Fraction Control</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Confidence-based progressive pruning enforces material budget constraints during generation while preserving structural integrity.
+            </p>
+          </div>
+          <div class="column is-one-third">
+            <img src="static/images/icml_blocking.png" alt="Spatial blocking" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h4 class="title is-5" style="margin-top: 1rem;">Spatial Blocking</h4>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Engineers mark keep-out zones in the input; the model generates topologies that respect these spatial constraints.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End deployment -->
+
+
+<!-- Architecture -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Architecture</h2>
+        <img src="static/images/architecture.png" alt="Model architecture" style="width: 100%; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 1rem 0;">
+        <div class="content has-text-justified" style="margin-top: 1.5rem;">
+          <p>
+            The model uses a transformer backbone with <strong>cross-attention conditioning</strong> &mdash; physical fields attend to topology tokens via cross-attention, keeping conditioning and generation in separate streams. Training uses <strong>Bernoulli flow matching</strong>, an iterative refinement process from uniform random bits to binary topology via learned transition probabilities. At test time, the model generates a topology in a single forward pass with 50 refinement steps.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End architecture -->
+
+
+<!-- BibTeX -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <div class="bibtex-header">
+      <h2 class="title">BibTeX</h2>
+      <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+    <pre id="bibtex-code"><code>@inproceedings{rashed2026generalization,
+    title={On the Generalization in Topology Optimization via
+           Sensitivity-Conditioned Bernoulli Flow Matching},
+    author={Rashed, Mohammad and Madeira, Duarte F. Valoroso and
+            Gholami, Babak and Guerbuez, Caglar and
+            Yang, Yunjia and Thuerey, Nils},
+    booktitle={International Conference on Machine Learning (ICML)},
+    year={2026}
+}</code></pre>
+  </div>
+</section>
+<!-- End BibTeX -->
+
+
+  <footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content" style="text-align: center;">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            <br>Licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>

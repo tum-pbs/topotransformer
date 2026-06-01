@@ -4,7 +4,7 @@
 
 *Mohammad Rashed, Duarte F. Valoroso Madeira, Babak Gholami, Caglar Guerbuez, Yunjia Yang, Nils Thuerey*
 
-**ICML 2026** &nbsp;|&nbsp; [Project Page](https://tum-pbs.github.io/topotransformer) &nbsp;|&nbsp; [Paper (coming soon)](#)
+**ICML 2026** &nbsp;|&nbsp; [Project Page](https://tum-pbs.github.io/topotransformer/) &nbsp;|&nbsp; [Paper (coming soon)](#)
 
 ---
 

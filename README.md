@@ -147,3 +147,8 @@ python eval/evaluate_compliance.py \
 ## License
 
 This project is licensed under [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/). See [LICENSE](LICENSE) for details.
+
+## Licensing
+
+- Repository root: LICENSE (CC BY-NC-ND 4.0) — code and datasets unless otherwise stated.
+- Landing page and static assets: files under `docs/` are derived from the Academic Project Page Template (Eliahu Horwitz) and are licensed under CC BY-SA 4.0. See `docs/LICENSE-CC-BY-SA-4.0` and `docs/ATTRIBUTION.md` for details.

@@ -133,11 +133,14 @@ python eval/evaluate_compliance.py \
 ## Citation
 
 ```bibtex
-@inproceedings{rashed2026generalization,
-    title={On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching},
-    author={Rashed, Mohammad and Madeira, Duarte F. Valoroso and Gholami, Babak and Guerbuez, Caglar and Yang, Yunjia and Thuerey, Nils},
-    booktitle={International Conference on Machine Learning (ICML)},
-    year={2026}
+@misc{rashed2026generalizationtopologyoptimizationsensitivityconditioned,
+      title={On the Generalization in Topology Optimization via Sensitivity-Conditioned Bernoulli Flow Matching}, 
+      author={Mohammad Rashed and Duarte F. Valoroso Madeira and Babak Gholami and Caglar Guerbuez and Yunjia Yang and Nils Thuerey},
+      year={2026},
+      eprint={2606.02179},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2606.02179}, 
 }
 ```
 
